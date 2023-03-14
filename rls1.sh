@@ -34,7 +34,6 @@ do
             deltaY=$(( ${CoordsRLS1XY[1]} - $Y ))
             if [[ `echo "sqrt(($deltaX)^2 + ($deltaY)^2)" | bc` -le $DestinationRLS1 ]]
             then
-                #echo "hihi $id"
                 if [[ $deltaY -le $(( $kLine1 * $deltaX / 10 )) && $deltaY -le $(( $kLine2 * $deltaX / 10 )) ]]
                 then
                     echo "ne whodit $id"
