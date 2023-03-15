@@ -6,7 +6,7 @@ CoordsRLS1XY=(6500000 6000000)
 CoordsRLS2XY=(2500000 3650000)
 CoordsRLS3XY=(5500000 3725000)
 
-AngleForRLS1=(270 200)
+AngleForRLS1=(170 370)
 AngleForRLS2=(135 90)
 AngleForRLS3=(165 120)
 
@@ -20,7 +20,7 @@ declare -a TargetsId
 RangeXY=(13000000 9000000)
 
 CoordsRLS1XY=(6500000 6000000)
-AngleForRLS1=(270 200)
+AngleForRLS1=(170 370)
 DestinationRLS1=4000000
 
 MaxKolTargets=0

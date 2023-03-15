@@ -1,17 +1,22 @@
 #!/bin/bash
-declare -a TargetsId
 RangeXY=(13000000 9000000)
-
-CoordsRLS1XY=(6500000 6000000)
-AngleForRLS1=(270 200)
-DestinationRLS1=4000000
-
-kLine1=1
-kLine2=-1
-
 MaxKolTargets=0
 path="/tmp/GenTargets/Targets"
 targetsFile="temp/targets.txt"
+
+PI=`echo "scale=1000; 4*a(1)" | bc -l`
+
+tan ()
+{
+    echo "scale=5;s($1)/c($1)" | bc -l
+}
+
+CoordsRLS1XY=(6500000 6000000)
+AngleForRLS=(170 370)
+DestinationRLS1=4000000
+
+AngleForRLSRadian=(`echo "scale=5;(360-(${AngleForRLS[0]}-90))*${PI}/180" | bc -l` `echo "scale=5;(360-(${AngleForRLS[1]}-90))*${PI}/180" | bc -l`)
+TanForAngles=(`tan ${AngleForRLSRadian[0]}` `tan ${AngleForRLSRadian[1]}`)
 
 while :
 do 
@@ -21,7 +26,6 @@ do
     then 
         MaxKolTargets=`ls /tmp/GenTargets/Targets | wc -w`
     fi
-    #echo `date`
     if [[ "$MaxKolTargets" -ne 0 ]] 
     then
         Topfiles=`echo "$temp" | head -n $MaxKolTargets`
@@ -34,21 +38,18 @@ do
             deltaY=$(( ${CoordsRLS1XY[1]} - $Y ))
             if [[ `echo "sqrt(($deltaX)^2 + ($deltaY)^2)" | bc` -le $DestinationRLS1 ]]
             then
-                if [[ $deltaY -le $(( $kLine1 * $deltaX / 10 )) && $deltaY -le $(( $kLine2 * $deltaX / 10 )) ]]
+                if [[ 1 -eq `echo "$deltaY<=(${TanForAngles[0]}*$deltaX)" | bc` || 1 -eq `echo "$deltaY>=(${TanForAngles[1]}*$deltaX)" | bc` ]]
                 then
-                    echo "ne whodit $id"
+                    echo "ne whodit $id X$X Y$Y"
                 else
-                    echo "ebat whodit $id"
+                    echo "ebat whodit $id X$X Y$Y"
                 fi
             else 
-                echo "hyine ebana $id"
+                echo "hyine ebana $id X$X Y$Y"
             fi
         done
-
+        echo "------------------------------------"
     fi
-
-
-    echo "---------------------------"
 
     sleep .5
 done
