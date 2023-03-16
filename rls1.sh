@@ -3,12 +3,20 @@
 # Размер карты
 RangeXY=(13000000 9000000)
 
+PlaneSpeedL=50
+PlaneSpeedH=250
+KRSpeedL=250
+KRSpeedH=1000
+BRSpeedL=8000
+BRSpeedH=10000
+
 # Максимальное количество целей на карте одновременно
 MaxKolTargets=30
 # Путь до папки с Целями
 path="/tmp/GenTargets/Targets"
 # Путь до файла с актуальными данными о целях (Пока не используется)
 targetsFile="temp/targets.txt"
+echo "" > $targetsFile
 
 # Число ПИ, 1000 знаков после запятой
 PI=`echo "scale=1000; 4*a(1)" | bc -l`
@@ -59,15 +67,46 @@ do
             # Логика работает!!!! Но почему именно с такими знаками сравнения??? Надо подумать и проверить!
             if [[ (1 -eq `echo "$deltaY<(${TanForAngles[0]}*$deltaX)" | bc`) && (1 -eq `echo "$deltaY>(${TanForAngles[1]}*$deltaX)" | bc`) ]]
             then
-                echo "$id ne whodit X$X Y$Y"
+                continue
             else
-                echo "$id ebat whodit X$X Y$Y"
+                TargetCheck=`grep $id $targetsFile | wc -l`
+
+                if [[ $TargetCheck -eq 0 ]]
+                then
+                    # echo "$id;$X;$Y ----------- First check!!!!"
+                    echo "$id;$X;$Y" >> $targetsFile
+                else
+                    if [[ $TargetCheck -eq 1 ]]
+                    then
+                        PrevX=`grep $id $targetsFile | cut -d ";" -f2`
+                        PrevY=`grep $id $targetsFile | cut -d ";" -f3`
+                        if [[ ($PrevX -ne $X) && ($PrevY -ne $Y) ]]
+                        then
+                            # echo "$id;$X;$Y ------------------- Second check!!!!"
+                            Distance=`echo "sqrt(($PrevX-$X)^2 + ($PrevY-$Y)^2)" | bc`
+                            # echo $Distance
+                            if [[ ($Distance -ge $BRSpeedL) && ($Distance -le $BRSpeedH) ]]
+                            then
+                                NameTarget="Бал.блок"
+                            else
+                                if [[ ($Distance -ge $KRSpeedL) && ($Distance -le $KRSpeedH) ]]
+                                then
+                                    NameTarget="К.ракета"
+                                else
+                                    NameTarget="Самолет"
+                                fi
+                            fi
+                            echo “Обнаружена цель $NameTarget ID:$id с координатами $X $Y”
+                            echo "$id;$X;$Y" >> $targetsFile
+                        fi
+                    fi
+                fi
             fi
         else 
-            echo "$id hyine ebana X$X Y$Y"
+            continue
         fi
     done
-    echo "------------------------------------"
+    echo "..."
     # fi
 
     sleep .5
