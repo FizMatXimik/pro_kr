@@ -36,9 +36,18 @@ AngleForRLSRadian=(`echo "scale=5;(360-(${AngleForRLS[0]}-90))*${PI}/180" | bc -
 # Вычисление коэффициентов наклона через тангенс
 TanForAngles=(`tan ${AngleForRLSRadian[0]}` `tan ${AngleForRLSRadian[1]}`)
 
+CoordsSPROXY=(3250000 3350000)
+RadiusSPRO=1000000
+
+
 while :
 do 
-    # 
+    if ! [ -d $path ] 
+    then
+        echo "..."
+        sleep .5
+        continue
+    fi
     temp=`ls $path -t`
     # if [[ $temp != "" && $MaxKolTargets -eq 0 ]]
     if [[ $temp == "" ]]
@@ -74,6 +83,7 @@ do
                 if [[ $TargetCheck -eq 0 ]]
                 then
                     # echo "$id;$X;$Y ----------- First check!!!!"
+                    echo "Обнаружена цель ID:$id с координатами $X $Y"
                     echo "$id;$X;$Y" >> $targetsFile
                 else
                     if [[ $TargetCheck -eq 1 ]]
@@ -83,20 +93,38 @@ do
                         if [[ ($PrevX -ne $X) && ($PrevY -ne $Y) ]]
                         then
                             # echo "$id;$X;$Y ------------------- Second check!!!!"
+                            # echo "Обнаружена цель ID:$id с координатами $X $Y"
                             Distance=`echo "sqrt(($PrevX-$X)^2 + ($PrevY-$Y)^2)" | bc`
                             # echo $Distance
                             if [[ ($Distance -ge $BRSpeedL) && ($Distance -le $BRSpeedH) ]]
                             then
-                                NameTarget="Бал.блок"
-                            else
-                                if [[ ($Distance -ge $KRSpeedL) && ($Distance -le $KRSpeedH) ]]
+                                # NameTarget="Бал.блок"
+                                A=-1
+                                B=`echo "scale=5;($PrevY-$Y)/($PrevX-$X)" | bc`
+                                C=`echo "scale=5;$Y-($B*$X)" | bc`
+                                chislitel=`echo "$A*${CoordsSPROXY[0]} + $B*${CoordsSPROXY[1]} + $C" | bc`
+                                d=`echo "${chislitel#-}/(sqrt((($A)^2)+(($B)^2)))" | bc`
+
+                                DistanceFirstPoint=`echo "sqrt((${CoordsSPROXY[0]}-$PrevX)^2 + (${CoordsSPROXY[1]}-$PrevY)^2)" | bc`
+                                DistanceSecondPoint=`echo "sqrt((${CoordsSPROXY[0]}-$X)^2 + (${CoordsSPROXY[1]}-$Y)^2)" | bc`
+
+                                if [[ ($d -le $RadiusSPRO) && ($DistanceFirstPoint -ge $DistanceSecondPoint) ]]
                                 then
-                                    NameTarget="К.ракета"
-                                else
-                                    NameTarget="Самолет"
+                                    echo "Цель ID:$id движется в направлении СПРО"
+                                    # echo "$PrevX $PrevY"
                                 fi
+                                # echo $d
+                                # echo "y = $k * x + ($b)"
+
+                            # else
+                                # if [[ ($Distance -ge $KRSpeedL) && ($Distance -le $KRSpeedH) ]]
+                                # then
+                                #     NameTarget="К.ракета"
+                                # else
+                                #     NameTarget="Самолет"
+                                # fi
                             fi
-                            echo “Обнаружена цель $NameTarget ID:$id с координатами $X $Y”
+                            # echo "Обнаружена цель $NameTarget ID:$id с координатами $X $Y"
                             echo "$id;$X;$Y" >> $targetsFile
                         fi
                     fi
