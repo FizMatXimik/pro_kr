@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PIDList=`cat ./temp/pidOfScripts`
+PIDList=`cat ./files/pidOfScripts`
 kill $PIDList
 
 rm -rf /tmp/GenTargets/Targets

@@ -8,14 +8,14 @@ PlaneSpeedH=250
 KRSpeedL=250
 KRSpeedH=1000
 BRSpeedL=8000
-BRSpeedH=10000
+BRSpeedH=1000
 
 # Максимальное количество целей на карте одновременно
 MaxKolTargets=30
 # Путь до папки с Целями
 path="/tmp/GenTargets/Targets"
 # Путь до файла с актуальными данными о целях (Пока не используется)
-targetsFile="temp/targets1.txt"
+targetsFile="files/targets1.txt"
 echo "" > $targetsFile
 
 # Число ПИ, 1000 знаков после запятой
@@ -49,7 +49,7 @@ do
         continue
     fi
 
-    temp=`ls $path -t`
+    temp=`ls $path -t 2>/dev/null`
     if [[ $temp == "" ]]
     then 
         #echo "..."
@@ -78,7 +78,6 @@ do
 
                 if [[ $TargetCheck -eq 0 ]]
                 then
-                    echo -e "\n\033[33m __RLS_1__ Обнаружена цель ID:$id с координатами $X $Y"
                     echo "$id;$X;$Y" >> $targetsFile
                 else
                     if [[ $TargetCheck -eq 1 ]]
@@ -91,6 +90,7 @@ do
 
                             if [[ ($Distance -ge $BRSpeedL) && ($Distance -le $BRSpeedH) ]]
                             then
+                                NameTarget="Бал.блок"
                                 A=-1
                                 B=`echo "scale=5;($PrevY-$Y)/($PrevX-$X)" | bc`
                                 C=`echo "scale=5;$Y-($B*$X)" | bc`
@@ -100,10 +100,20 @@ do
                                 DistanceFirstPoint=`echo "sqrt((${CoordsSPROXY[0]}-$PrevX)^2 + (${CoordsSPROXY[1]}-$PrevY)^2)" | bc`
                                 DistanceSecondPoint=`echo "sqrt((${CoordsSPROXY[0]}-$X)^2 + (${CoordsSPROXY[1]}-$Y)^2)" | bc`
 
+                                echo -e "\e[0;33m __RLS_1__ Обнаружена цель $NameTarget ID:$id с координатами $X $Y"
+
                                 if [[ ($d -le $RadiusSPRO) && ($DistanceFirstPoint -ge $DistanceSecondPoint) ]]
                                 then
-                                    echo -e "\n\033[33m __RLS_1__ Цель ID:$id движется в направлении СПРО"
+                                    echo -e "\e[0;33m __RLS_1__ Бал.блок ID:$id движется в направлении СПРО"
                                 fi
+                            else
+                                if [[ ($Distance -ge $KRSpeedL) && ($Distance -le $KRSpeedH) ]]
+                                then
+                                    NameTarget="К.ракета"
+                                else
+                                    NameTarget="Самолет"
+                                fi
+                                echo -e "\e[0;33m __RLS_1__ Обнаружена цель $NameTarget ID:$id с координатами $X $Y"
                             fi
                             echo "$id;$X;$Y" >> $targetsFile
                         fi
@@ -114,7 +124,7 @@ do
             continue
         fi
     done
-    #echo -e "\033[0m ..."
+    echo -e "\033[0m ..."
     sleep .5
 done
 

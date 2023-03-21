@@ -15,7 +15,7 @@ MaxKolTargets=30
 # Путь до папки с Целями
 path="/tmp/GenTargets/Targets"
 # Путь до файла с актуальными данными о целях (Пока не используется)
-targetsFile="temp/targets3.txt"
+targetsFile="files/targets3.txt"
 echo "" > $targetsFile
 
 # Число ПИ, 1000 знаков после запятой
@@ -47,7 +47,7 @@ do
         sleep .5
         continue
     fi
-    temp=`ls $path -t`
+    temp=`ls $path -t 2>/dev/null`
     # if [[ $temp != "" && $MaxKolTargets -eq 0 ]]
     if [[ $temp == "" ]]
     then 
@@ -77,7 +77,6 @@ do
                 if [[ $TargetCheck -eq 0 ]]
                 then
                     # echo "$id;$X;$Y ----------- First check!!!!"
-                    echo -e "\n\033[36m __RLS_3__ Обнаружена цель ID:$id с координатами $X $Y"
                     echo "$id;$X;$Y" >> $targetsFile
                 else
                     if [[ $TargetCheck -eq 1 ]]
@@ -92,7 +91,7 @@ do
                             # echo $Distance
                             if [[ ($Distance -ge $BRSpeedL) && ($Distance -le $BRSpeedH) ]]
                             then
-                                # NameTarget="Бал.блок"
+                                NameTarget="Бал.блок"
                                 A=-1
                                 B=`echo "scale=5;($PrevY-$Y)/($PrevX-$X)" | bc`
                                 C=`echo "scale=5;$Y-($B*$X)" | bc`
@@ -102,23 +101,21 @@ do
                                 DistanceFirstPoint=`echo "sqrt((${CoordsSPROXY[0]}-$PrevX)^2 + (${CoordsSPROXY[1]}-$PrevY)^2)" | bc`
                                 DistanceSecondPoint=`echo "sqrt((${CoordsSPROXY[0]}-$X)^2 + (${CoordsSPROXY[1]}-$Y)^2)" | bc`
 
+                                echo -e "\e[0;31m __RLS_3__ Обнаружена цель $NameTarget ID:$id с координатами $X $Y"
+
                                 if [[ ($d -le $RadiusSPRO) && ($DistanceFirstPoint -ge $DistanceSecondPoint) ]]
                                 then
-                                    echo -e "\n\033[36m __RLS_3__ Цель ID:$id движется в направлении СПРО"
-                                    # echo "$PrevX $PrevY"
+                                    echo -e "\e[0;31m __RLS_3__ Бал.блок ID:$id движется в направлении СПРО"
                                 fi
-                                # echo $d
-                                # echo "y = $k * x + ($b)"
-
-                            # else
-                                # if [[ ($Distance -ge $KRSpeedL) && ($Distance -le $KRSpeedH) ]]
-                                # then
-                                #     NameTarget="К.ракета"
-                                # else
-                                #     NameTarget="Самолет"
-                                # fi
+                            else
+                                if [[ ($Distance -ge $KRSpeedL) && ($Distance -le $KRSpeedH) ]]
+                                then
+                                    NameTarget="К.ракета"
+                                else
+                                    NameTarget="Самолет"
+                                fi
+                                echo -e "\e[0;31m __RLS_3__ Обнаружена цель $NameTarget ID:$id с координатами $X $Y"
                             fi
-                            # echo "Обнаружена цель $NameTarget ID:$id с координатами $X $Y"
                             echo "$id;$X;$Y" >> $targetsFile
                         fi
                     fi
@@ -128,7 +125,7 @@ do
             continue
         fi
     done
-    #echo -e "\033[0m ..."
+    echo -e "\033[0m ..."
     # fi
 
     sleep .5
