@@ -21,11 +21,18 @@ PID6=`echo $!`
 sleep .5
 ./zrdn3.sh &
 PID7=`echo $!`
+sleep .5
+./graph.sh &
+PID8=`echo $!`
+
+sleep 1
+./GenTargets.sh &
+PID9=`echo $!`
 
 # sleep 1
-# ./GenTargets.sh &
-# PID8=`echo $!`
+# java -jar /home/aleksandr/pro_kr_graph/target/pro_kr_graph-1.0-SNAPSHOT.jar &
+# PID10=`echo $!`
 
-echo "$PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7" > ./files/pidOfScripts
+echo "$PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7 $PID8 $PID9" > ./files/pidOfScripts
 
   
