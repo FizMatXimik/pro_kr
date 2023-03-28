@@ -58,6 +58,8 @@ fi
 # Вычисление коэффициентов наклона через тангенс
 TanForAngles=($TanForAngles1 $TanForAngles2)
 
+echo -e "$SColor RLS-2 Started"
+
 # Основной цикл станции
 while :
 do 

@@ -39,6 +39,8 @@ StatusLog="./messages/StatusLog"
 time_format="%d/%m/%Y %T.%3N"
 # Основной цикл станции
 
+echo -e "$SColor ZRDN-2 Started"
+
 while :
 do 
 

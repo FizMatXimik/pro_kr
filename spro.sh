@@ -36,6 +36,8 @@ WarningsLog="./messages/WarningsLog"
 StatusLog="./messages/StatusLog"
 time_format="%d/%m/%Y %T.%3N"
 
+echo -e "$SColor SPRO Started"
+
 # Основной цикл станции
 while :
 do 

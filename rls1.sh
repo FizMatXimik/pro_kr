@@ -42,6 +42,8 @@ AngleForRLSRadian=(`echo "scale=5;(360-(${AngleForRLS[0]}-90))*${PI}/180" | bc -
 # Вычисление коэффициентов наклона через тангенс
 TanForAngles=(`tan ${AngleForRLSRadian[0]}` `tan ${AngleForRLSRadian[1]}`)
 
+echo -e "$SColor RLS-1 Started"
+
 # Основной цикл станции
 while :
 do 

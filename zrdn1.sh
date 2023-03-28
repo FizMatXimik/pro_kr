@@ -37,6 +37,9 @@ TargetsLog="./messages/TargetsLog"
 WarningsLog="./messages/WarningsLog"
 StatusLog="./messages/StatusLog"
 time_format="%d/%m/%Y %T.%3N"
+
+echo -e "$SColor ZRDN-1 Started"
+
 # Основной цикл станции
 while :
 do 

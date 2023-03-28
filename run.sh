@@ -9,28 +9,28 @@ mkdir ./messages/TargetsLog
 mkdir ./messages/WarningsLog
 mkdir ./messages/StatusLog
 
-sleep .5
+sleep .2
 ./kp.sh &
 PID0=`echo $!`
-sleep .5
+sleep .2
 ./rls1.sh &
 PID1=`echo $!`
-sleep .5
+sleep .2
 ./rls2.sh &
 PID2=`echo $!`
-sleep .5
+sleep .2
 ./rls3.sh &
 PID3=`echo $!`
-sleep .5
+sleep .2
 ./spro.sh &
 PID4=`echo $!`
-sleep .5
+sleep .2
 ./zrdn1.sh &
 PID5=`echo $!`
-sleep .5
+sleep .2
 ./zrdn2.sh &
 PID6=`echo $!`
-sleep .5
+sleep .2
 ./zrdn3.sh &
 PID7=`echo $!`
 
