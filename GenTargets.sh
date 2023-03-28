@@ -3,7 +3,7 @@
 declare -a TargetsId
 MaxKolTargets=29      #+1
 Probability=7         #вероятность поражения 10-90%
->>>>>>> 9db10d576a5cf6de0fed1f7f64090beb49451dcf
+
 RangeX=13000000       #метры
 RangeY=9000000        #метры
 
