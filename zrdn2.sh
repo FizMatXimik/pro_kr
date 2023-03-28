@@ -32,7 +32,14 @@ targetsFileIds="files/targets_zrdn2_ids.txt"
 ammunitionFile="files/ZRDN2_Missiles"
 > $ammunitionFile
 NumOfMissiles=20
+# Path to messages
+TargetsLog="./messages/TargetsLog"
+WarningsLog="./messages/WarningsLog"
+StatusLog="./messages/StatusLog"
+time_format="%d/%m/%Y %T.%3N"
 # Основной цикл станции
+
+echo -e "$SColor ZRDN-2 Started"
 
 while :
 do 
@@ -73,7 +80,8 @@ do
         # Если нет, то есть совпадений ноль, то значит цель была сбита и можно выводить сообщение и удалять файл 
         if [[ $TargetCheckAt -eq 0 ]]
         then
-            echo -e "$SColor $SName Цель ID:$idAT сбита"
+            echo -e "$SColor $moscow_time $SName Цель ID:$idAT сбита"
+            echo -e "$moscow_time,$SName,Сбита,$idAT,NULL" > "$TargetsLog/$SName-$idAT-destroyed-$logTime.log"
             rm "$pathShoot/$idAT"
         fi
     done
@@ -81,6 +89,8 @@ do
     # Цикл, где на каждой итерации берем новую информацию по одной из целей
     for file in $Topfiles
     do
+        moscow_time=$(TZ=Europe/Moscow date +"$time_format")
+        logTime=$(TZ=Europe/Moscow date +"%T.%3N")
         id=${file: -6}
         X=`cat "${path}/${file}" | cut -d "," -f1 | cut -c2-9`
         Y=`cat "${path}/${file}" | cut -d "," -f2 | cut -c2-9`
@@ -110,16 +120,22 @@ do
                             then
                                 if [[ ($Distance -le $PlaneSpeedH) ]]
                                 then
-                                    echo -e "$SColor $SName Обнаружен Самолет ID:$id с координатами X$X Y$Y"
+                                    echo -e "$SColor $moscow_time $SName Обнаружен Самолет ID:$id с координатами X$X Y$Y"
+                                    echo -e "$moscow_time,$SName,Обнаружен Самолет,$id,X$X Y$Y" > "$WarningsLog/$SName-$id-detected-$logTime.log"
                                 else
-                                    echo -e "$SColor $SName Обнаружена К.ракета ID:$id с координатами $X $Y"
+                                    echo -e "$SColor $moscow_time $SName Обнаружена К.ракета ID:$id с координатами $X $Y"
+                                    echo -e "$moscow_time,$SName,Обнаружена К.ракета,$id,X$X Y$Y" > "$WarningsLog/$SName-$id-detected-$logTime.log"
                                 fi
                             else
                                 # иначе, если это 3-я или более засечка, то говорим, что был промах при выстреле
-                                echo -e "$SColor $SName Промах по цели ID:$id"
+                                echo -e "$SColor $moscow_time $SName Промах по цели ID:$id"
+                                echo -e "$moscow_time,$SName,Промах,$id,X$X Y$Y" > "$TargetsLog/$SName-$id-miss-$logTime.log"
+                                
                             fi
                             # производим выстрел
-                            echo -e "$SColor $SName Выстрел по цели ID:$id "
+                            moscow_time=$(TZ=Europe/Moscow date +"$time_format")
+                            echo -e "$SColor $moscow_time $SName Выстрел по цели ID:$id "
+                            echo -e "$moscow_time,$SName,Выстрел,$id,X$X Y$Y" > "$TargetsLog/$SName-$id-shoot-$logTime.log"
                             # создаем файл в папке уничтожения целей
                            	touch "$pathD/$id"
                             # записываем выстрел в файл арсенала
@@ -131,15 +147,14 @@ do
                             # проверка файла с боекомплектом
                             L=`cat $ammunitionFile | wc -l`
                             Missilesremained=`echo "$NumOfMissiles - $L" | bc`
-                            # печатаем остаток боекомплекта
-                            echo -e "$SColor $SName Ракет осталось: $Missilesremained"
 
-                            # если боекомплект пуст то выводим сообщение и перезагружаем его
+                            # если боекомплект пуст то перезагружаем его
                             if [[ $Missilesremained -eq 0 ]]
                             then 
-                                echo -e "$SColor $SName Боекомплект пуст"
                                 > $ammunitionFile
-                                echo -e "$SColor $SName Боекомплект перезаряжен"
+                                moscow_time=$(TZ=Europe/Moscow date +"$time_format")
+                                echo -e "$SColor $moscow_time $SName Боекомплект перезаряжен"
+                                echo -e "$moscow_time,$SName,Боекомплект перезаряжен,NULL,NULL" > "$WarningsLog/$SName-$id-reloaded-$logTime.log"
                             fi
                         fi
                         echo "$id;$X;$Y" >> $targetsFile
@@ -151,5 +166,8 @@ do
         fi
     done
     # echo -e "\033[0m ..."
-    sleep .5
+    L=`cat $ammunitionFile | wc -l`
+    Missilesremained=`echo "$NumOfMissiles - $L" | bc`
+    echo -e "$moscow_time,$SName,OK,$Missilesremained" > "$StatusLog/$SName-status-$logTime.log"
+    sleep .9
 done

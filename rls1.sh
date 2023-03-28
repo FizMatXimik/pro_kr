@@ -9,10 +9,6 @@ SName="__RLS_1__"
 # Цвет текста станции
 SColor="\e[0;33m"
 # Границы скоростей
-PlaneSpeedL=50
-PlaneSpeedH=250
-KRSpeedL=250
-KRSpeedH=1000
 BRSpeedL=8000
 BRSpeedH=10000
 # Путь до папки с Целями
@@ -20,6 +16,10 @@ path="/tmp/GenTargets/Targets"
 # Путь до файла с засечками
 targetsFile="files/targets1.txt"
 > $targetsFile
+# Path to messages
+WarningsLog="./messages/WarningsLog"
+StatusLog="./messages/StatusLog"
+time_format="%d/%m/%Y %T.%3N"
 
 # Число ПИ, 1000 знаков после запятой
 PI=`echo "scale=1000; 4*a(1)" | bc -l`
@@ -41,6 +41,8 @@ RadiusSPRO=1000000
 AngleForRLSRadian=(`echo "scale=5;(360-(${AngleForRLS[0]}-90))*${PI}/180" | bc -l` `echo "scale=5;(360-(${AngleForRLS[1]}-90))*${PI}/180" | bc -l`)
 # Вычисление коэффициентов наклона через тангенс
 TanForAngles=(`tan ${AngleForRLSRadian[0]}` `tan ${AngleForRLSRadian[1]}`)
+
+echo -e "$SColor RLS-1 Started"
 
 # Основной цикл станции
 while :
@@ -65,6 +67,7 @@ do
 
     for file in $Topfiles
     do
+        logTime=$(TZ=Europe/Moscow date +"%T.%3N")
         id=${file: -6}
         X=`cat "${path}/${file}" | cut -d "," -f1 | cut -c2-9`
         Y=`cat "${path}/${file}" | cut -d "," -f2 | cut -c2-9`
@@ -102,19 +105,15 @@ do
 
                                 DistanceFirstPoint=`echo "sqrt((${CoordsSPROXY[0]}-$PrevX)^2 + (${CoordsSPROXY[1]}-$PrevY)^2)" | bc`
                                 DistanceSecondPoint=`echo "sqrt((${CoordsSPROXY[0]}-$X)^2 + (${CoordsSPROXY[1]}-$Y)^2)" | bc`
-
-                                echo -e "$SColor $SName Обнаружен Бал.блок ID:$id с координатами X$X Y$Y"
+                                moscow_time=$(TZ=Europe/Moscow date +"$time_format")
+                                echo -e "$SColor $moscow_time $SName Обнаружен Бал.блок ID:$id с координатами X$X Y$Y"
+                                echo -e "$moscow_time,$SName,Обнаружен Бал.блок,$id,X$X Y$Y" > "$WarningsLog/$SName-$id-detected-$logTime.log"
 
                                 if [[ ($d -le $RadiusSPRO) && ($DistanceFirstPoint -ge $DistanceSecondPoint) ]]
                                 then
-                                    echo -e "$SColor $SName Бал.блок ID:$id движется в направлении СПРО"
-                                fi
-                            else
-                                if [[ ($Distance -ge $KRSpeedL) && ($Distance -le $KRSpeedH) ]]
-                                then
-                                    echo -e "$SColor $SName Обнаружена К.ракета ID:$id с координатами X$X Y$Y"
-                                else
-                                    echo -e "$SColor $SName Обнаружен Самолет ID:$id с координатами X$X Y$Y"
+                                    moscow_time=$(TZ=Europe/Moscow date +"$time_format")
+                                    echo -e "$SColor $moscow_time $SName Бал.блок ID:$id движется в направлении СПРО"
+                                    echo -e "$moscow_time,$SName,Бал.блок движется в направлении СПРО,$id,X$X Y$Y" > "$WarningsLog/$SName-$id-toSPRO-$logTime.log"
                                 fi
                             fi
                             echo "$id;$X;$Y" >> $targetsFile
@@ -127,7 +126,8 @@ do
         fi
     done
     # echo -e "\033[0m ..."
-    sleep .5
+    echo -e "$moscow_time,$SName,OK,NULL" > "$StatusLog/$SName-status-$logTime.log"
+    sleep .9
 done
 
 
