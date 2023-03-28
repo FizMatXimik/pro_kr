@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo -e "$SColor KP Started"
 
 rm -f db/command_post_journal.db || true
 sqlite3 db/command_post_journal.db "DROP TABLE IF EXISTS Warnings_Log;"
@@ -80,9 +81,11 @@ done
 # sqlite3 db/command_post_journal.db "insert into Warning_Log (timestamp, system_id, information, target_id, coordinates)
 # 			values ('$moscow_time','RLS_1', 'test_message', 'abc123', 'X69994,Y214234');"
 
-# echo -e '.mode column\n.headers on\nselect * from Warnings_Log;\n' | sqlite3 db/command_post_journal.db
+# echo -e '.mode column\n.headers on\nselect * from Warnings_Log ORDER BY timestamp ASC;\n' | sqlite3 db/command_post_journal.db
 
 # sqlite3 db/command_post_journal.db "insert into Status_Log (timestamp, system_id, status, missiles)
 # 	values ('$moscow_time','RLS_1', 'OK', 4);"
-# echo -e '.mode column\n.headers on\nselect * from Status_Log;\n' | sqlite3 db/command_post_journal.db
+# echo -e '.mode column\n.headers on\nselect * from Status_Log ORDER BY timestamp ASC;\n' | sqlite3 db/command_post_journal.db
+
+# echo -e '.mode column\n.headers on\nselect * from Targets_Log ORDER BY timestamp ASC;\n' | sqlite3 db/command_post_journal.db
 

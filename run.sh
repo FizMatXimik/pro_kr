@@ -9,6 +9,8 @@ mkdir ./messages/TargetsLog
 mkdir ./messages/WarningsLog
 mkdir ./messages/StatusLog
 
+echo "   "
+
 sleep .2
 ./kp.sh &
 PID0=`echo $!`
@@ -34,10 +36,12 @@ sleep .2
 ./zrdn3.sh &
 PID7=`echo $!`
 
+echo "   "
+
 # sleep 1
 # java -jar /home/aleksandr/pro_kr_graph/target/pro_kr_graph-1.0-SNAPSHOT.jar &
 # PID10=`echo $!`
 
-echo "$PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7" > ./files/pidOfScripts
+echo "$PID0 $PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7" > ./files/pidOfScripts
 
   

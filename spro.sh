@@ -126,25 +126,38 @@ do
                                 # пишем информацию о том, что цель обнаружена
                                 echo -e "$SColor $moscow_time $SName Обнаружен Бал.блок ID:$id с координатами X$X Y$Y"
                                 echo -e "$moscow_time,$SName,Обнаружен Бал.блок,$id,X$X Y$Y" > "$WarningsLog/$SName-$id-detected-$logTime.log"
+                                # производим выстрел
+                                moscow_time=$(TZ=Europe/Moscow date +"$time_format")
+                                echo -e "$SColor $moscow_time $SName Выстрел по цели ID:$id "
+                                echo -e "$moscow_time,$SName,Выстрел,$id,X$X Y$Y" > "$TargetsLog/$SName-$id-shoot-$logTime.log"
+                                # создаем файл в папке уничтожения целей
+                                touch "$pathD/$id"
+                                # записываем выстрел в файл арсенала
+                                echo "shoot" >> $ammunitionFile
+                                # создание файла цели, по которой был произведен выстрел
+                                echo 2 > "$pathShoot/$id"
                             else
-                                
-                                # иначе, если это 3-я или более засечка, то говорим, что был промах при выстреле
-                                echo -e "$SColor $moscow_time $SName Промах по цели ID:$id"
-                                echo -e "$moscow_time,$SName,Промах,$id,X$X Y$Y" > "$TargetsLog/$SName-$id-miss-$logTime.log"
-                                
+                                numOfChecks=`cat "$pathShoot/$id"`
+                                if [[ $numOfChecks -eq 0 ]]
+                                then 
+                                    moscow_time=$(TZ=Europe/Moscow date +"$time_format")
+                                    echo -e "$SColor $moscow_time $SName Промах по цели ID:$id"
+                                    echo -e "$moscow_time,$SName,Промах,$id,X$X Y$Y" > "$TargetsLog/$SName-$id-miss-$logTime.log"
+                                    # производим выстрел
+                                    moscow_time=$(TZ=Europe/Moscow date +"$time_format")
+                                    echo -e "$SColor $moscow_time $SName Выстрел по цели ID:$id "
+                                    echo -e "$moscow_time,$SName,Выстрел,$id,X$X Y$Y" > "$TargetsLog/$SName-$id-shoot-$logTime.log"
+                                    # создаем файл в папке уничтожения целей
+                                    touch "$pathD/$id"
+                                    # записываем выстрел в файл арсенала
+                                    echo "shoot" >> $ammunitionFile
+                                    # создание файла цели, по которой был произведен выстрел
+                                    echo 2 > "$pathShoot/$id"
+                                else
+                                    newNumOfChecks=`echo "$numOfChecks - 1" | bc`
+                                    echo $newNumOfChecks > "$pathShoot/$id"
+                                fi
                             fi
-                            # производим выстрел
-                            moscow_time=$(TZ=Europe/Moscow date +"$time_format")
-                            echo -e "$SColor $moscow_time $SName Выстрел по цели ID:$id "
-                            echo -e "$moscow_time,$SName,Выстрел,$id,X$X Y$Y" > "$TargetsLog/$SName-$id-shoot-$logTime.log"
-                            # создаем файл в папке уничтожения целей
-                           	touch "$pathD/$id"
-                            # записываем выстрел в файл арсенала
-                            echo "shoot" >> $ammunitionFile
-
-                            # создание файла цели, по которой был произведен выстрел
-                            touch "$pathShoot/$id"
-
                             # проверка файла с боекомплектом
                             L=`cat $ammunitionFile | wc -l`
                             Missilesremained=`echo "$NumOfMissiles - $L" | bc`
