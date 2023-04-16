@@ -113,7 +113,7 @@ do
                                 A=-1
                                 B=`echo "scale=5;($PrevY-$Y)/($PrevX-$X)" | bc`
                                 C=`echo "scale=5;$Y-($B*$X)" | bc`
-                                chislitel=`echo "$A*${CoordsSPROXY[0]} + $B*${CoordsSPROXY[1]} + $C" | bc`
+                                chislitel=`echo "$A*${CoordsSPROXY[1]} + $B*${CoordsSPROXY[0]} + $C" | bc`
                                 d=`echo "${chislitel#-}/(sqrt((($A)^2)+(($B)^2)))" | bc`
 
                                 DistanceFirstPoint=`echo "sqrt((${CoordsSPROXY[0]}-$PrevX)^2 + (${CoordsSPROXY[1]}-$PrevY)^2)" | bc`
@@ -139,6 +139,7 @@ do
         fi
     done
     # echo -e "\033[0m ..."
+    moscow_time=$(TZ=Europe/Moscow date +"$time_format")
     echo -e "$moscow_time,$SName,OK,NULL" > "$StatusLog/$SName-status-$logTime.log"
     sleep .9
 done

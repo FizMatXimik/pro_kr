@@ -183,6 +183,7 @@ do
     # echo -e "\033[0m ..."
     L=`cat $ammunitionFile | wc -l`
     Missilesremained=`echo "$NumOfMissiles - $L" | bc`
+    moscow_time=$(TZ=Europe/Moscow date +"$time_format")
     echo -e "$moscow_time,$SName,OK,$Missilesremained" > "$StatusLog/$SName-status-$logTime.log"
     sleep .9
 done

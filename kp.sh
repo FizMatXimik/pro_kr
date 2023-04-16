@@ -2,6 +2,9 @@
 
 echo -e "$SColor KP Started"
 
+log="./logs/KPLOG.log"
+> $log
+
 rm -f db/command_post_journal.db || true
 sqlite3 db/command_post_journal.db "DROP TABLE IF EXISTS Warnings_Log;"
 sqlite3 db/command_post_journal.db << CREATE_WARNINGS_LOG
@@ -53,6 +56,7 @@ do
 		IFS=','; info=(`cat "$warningsLog/$wlog_file"`); unset IFS;
 		sqlite3 db/command_post_journal.db "insert into Warnings_Log (timestamp, system_id, information, target_id, coordinates)
 						values ('${info[0]}','${info[1]}', '${info[2]}', '${info[3]}', '${info[4]}');"
+		echo -e "${info[0]},${info[1]},${info[2]},${info[3]},${info[4]}" >> "$log"
 		rm -f "$warningsLog/$wlog_file"
 	done
 
@@ -62,6 +66,7 @@ do
 		IFS=','; info=(`cat "$targetsLog/$tlog_file"`); unset IFS;
 		sqlite3 db/command_post_journal.db "insert into Targets_Log (timestamp, system_id, status, target_id, coordinates)
 						values ('${info[0]}','${info[1]}', '${info[2]}', '${info[3]}', '${info[4]}');"
+		echo -e "${info[0]},${info[1]},${info[2]},${info[3]},${info[4]}" >> "$log"
 		rm -f "$targetsLog/$tlog_file"
 	done
 
@@ -71,6 +76,7 @@ do
 		IFS=','; info=(`cat "$statusLog/$slog_file"`); unset IFS;
 		sqlite3 db/command_post_journal.db "insert into Status_Log (timestamp, system_id, status, missiles)
 						values ('${info[0]}','${info[1]}', '${info[2]}', '${info[3]}');"
+		echo -e "${info[0]},${info[1]},${info[2]},${info[3]}" >> "$log"
 		rm -f "$statusLog/$slog_file"
 	done
 
