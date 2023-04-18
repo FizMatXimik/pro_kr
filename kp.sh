@@ -4,6 +4,17 @@ echo -e "$SColor KP Started"
 
 log="./logs/KPLOG.log"
 > $log
+notalive="./temp/notalive"
+time_format="%d/%m/%Y %T.%3N"
+
+systems="RLS_1 RLS_2 RLS_3 SPRO ZRDN_1 ZRDN_2 ZRDN_3"
+
+for sys in $systems
+do
+	touch $notalive/$sys
+done
+
+SUPERSECRETNIYKLUCH="hihihaha"
 
 rm -f db/command_post_journal.db || true
 sqlite3 db/command_post_journal.db "DROP TABLE IF EXISTS Warnings_Log;"
@@ -53,9 +64,9 @@ do
 	# Log all warnings
 	for wlog_file in `ls -tr $warningsLog 2>/dev/null`
 	do
-		IFS=','; info=(`cat "$warningsLog/$wlog_file"`); unset IFS;
+		IFS=','; info=(`cat "$warningsLog/$wlog_file" | openssl aes-256-cbc -pbkdf2 -d -a -pass pass:$SUPERSECRETNIYKLUCH`); unset IFS;
 		sqlite3 db/command_post_journal.db "insert into Warnings_Log (timestamp, system_id, information, target_id, coordinates)
-						values ('${info[0]}','${info[1]}', '${info[2]}', '${info[3]}', '${info[4]}');"
+						values ('${info[0]}','${info[1]}', '${info[2]}', '${info[3]}', '${info[4]}');" 
 		echo -e "${info[0]},${info[1]},${info[2]},${info[3]},${info[4]}" >> "$log"
 		rm -f "$warningsLog/$wlog_file"
 	done
@@ -63,9 +74,9 @@ do
 	# Log all targets actions
 	for tlog_file in `ls -tr $targetsLog 2>/dev/null`
 	do
-		IFS=','; info=(`cat "$targetsLog/$tlog_file"`); unset IFS;
+		IFS=','; info=(`cat "$targetsLog/$tlog_file" | openssl aes-256-cbc -pbkdf2 -d -a -pass pass:$SUPERSECRETNIYKLUCH`); unset IFS;
 		sqlite3 db/command_post_journal.db "insert into Targets_Log (timestamp, system_id, status, target_id, coordinates)
-						values ('${info[0]}','${info[1]}', '${info[2]}', '${info[3]}', '${info[4]}');"
+						values ('${info[0]}','${info[1]}', '${info[2]}', '${info[3]}', '${info[4]}');" 
 		echo -e "${info[0]},${info[1]},${info[2]},${info[3]},${info[4]}" >> "$log"
 		rm -f "$targetsLog/$tlog_file"
 	done
@@ -73,14 +84,41 @@ do
 	# Log all statuses
 	for slog_file in `ls -tr $statusLog 2>/dev/null`
 	do
-		IFS=','; info=(`cat "$statusLog/$slog_file"`); unset IFS;
+		IFS=','; info=(`cat "$statusLog/$slog_file" | openssl aes-256-cbc -pbkdf2 -d -a -pass pass:$SUPERSECRETNIYKLUCH`); unset IFS;
 		sqlite3 db/command_post_journal.db "insert into Status_Log (timestamp, system_id, status, missiles)
-						values ('${info[0]}','${info[1]}', '${info[2]}', '${info[3]}');"
-		echo -e "${info[0]},${info[1]},${info[2]},${info[3]}" >> "$log"
+						values ('${info[0]}','${info[1]}', '${info[2]}', '${info[3]}');" 
 		rm -f "$statusLog/$slog_file"
 	done
 
 	sleep 1.0
+
+	Select=`echo -e '.mode column\n.headers on\nselect timestamp, system_id from Status_Log ORDER BY timestamp DESC limit 30;\n' | sqlite3 db/command_post_journal.db` 
+
+	for sys in $systems
+	do
+		Check=`echo $Select | grep $sys | wc -l`
+		CheckNotalive=`ls -l $notalive | grep $sys | wc -l`
+        if [[ $Check -eq 0 ]]
+        then
+        	if [[ $CheckNotalive -eq 0 ]]
+        	then
+            	touch $notalive/$sys
+            	moscow_time=$(TZ=Europe/Moscow date +"$time_format")
+            	echo -e "${moscow_time},"__${sys}__",Станция не отвечает" >> "$log"
+            	sqlite3 db/command_post_journal.db "insert into Status_Log (timestamp, system_id, status, missiles)
+						values ('${moscow_time}','__${sys}__', 'Станция не отвечает', 'NULL');" 
+            fi
+        else
+        	if [[ $CheckNotalive -eq 1 ]]
+        	then
+            	rm -rf $notalive/$sys
+            	moscow_time=$(TZ=Europe/Moscow date +"$time_format")
+            	echo -e "${moscow_time},"__${sys}__",Работоспособность восстановлена" >> "$log"
+            	sqlite3 db/command_post_journal.db "insert into Status_Log (timestamp, system_id, status, missiles)
+						values ('${moscow_time}','__${sys}__', 'Работоспособность восстановлена', 'NULL');" 
+            fi
+        fi 
+	done
 done
 
 
