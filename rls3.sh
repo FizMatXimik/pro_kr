@@ -7,7 +7,7 @@ MaxKolTargets=30
 # Название станции
 SName="__RLS_3__"
 # Цвет текста станции
-SColor="\e[0;31m"
+SColor="\e[0;34m"
 # Границы скоростей
 BRSpeedL=8000
 BRSpeedH=10000
@@ -30,17 +30,33 @@ tan ()
     echo "scale=5;s($1)/c($1)" | bc -l
 }
 
-# Конфигурация РЛС-3 Днепр
-CoordsRLSXY=(5500000 3725000)
-AngleForRLS=(165 285)
-DestinationRLS=3000000
+# Конфигурация РЛС-3 Дарьял
+CoordsRLSXY=(2950000 2750000)
+AngleForRLS=(90 180)
+RadiusRLS=7000000
 # Координаты и радиус СПРО
-CoordsSPROXY=(3250000 3350000)
-RadiusSPRO=1000000
+CoordsSPROXY=(3150000 3800000)
+RadiusSPRO=1200000
 # Перевод углов наклона прямых РЛС из градусов в радианы
 AngleForRLSRadian=(`echo "scale=5;(360-(${AngleForRLS[0]}-90))*${PI}/180" | bc -l` `echo "scale=5;(360-(${AngleForRLS[1]}-90))*${PI}/180" | bc -l`)
+
+if [[ (${AngleForRLS[0]} -eq 0) || (${AngleForRLS[0]} -eq 180) ]]
+then
+    TanForAngles1=0
+
+else 
+    TanForAngles1=`tan ${AngleForRLSRadian[0]}`
+fi
+if [[ (${AngleForRLS[1]} -eq 0) || (${AngleForRLS[1]} -eq 180) ]]
+then
+    TanForAngles2=0
+
+else 
+    TanForAngles2=`tan ${AngleForRLSRadian[1]}`
+fi
+
 # Вычисление коэффициентов наклона через тангенс
-TanForAngles=(`tan ${AngleForRLSRadian[0]}` `tan ${AngleForRLSRadian[1]}`)
+TanForAngles=($TanForAngles1 $TanForAngles2)
 
 echo -e "$SColor RLS-3 Started"
 
@@ -71,13 +87,12 @@ do
         id=${file: -6}
         X=`cat "${path}/${file}" | cut -d "," -f1 | cut -c2-9`
         Y=`cat "${path}/${file}" | cut -d "," -f2 | cut -c2-9`
-
         deltaX=$(( $X - ${CoordsRLSXY[0]} ))
         deltaY=$(( $Y - ${CoordsRLSXY[1]} ))
 
-        if [[ `echo "(($deltaX)^2 + ($deltaY)^2)<=(($DestinationRLS)^2)" | bc` -eq 1 ]]
+        if [[ `echo "(($deltaX)^2 + ($deltaY)^2)<=(($RadiusRLS)^2)" | bc` -eq 1 ]]
         then
-            if [[ (1 -eq `echo "$deltaY<(${TanForAngles[0]}*$deltaX)" | bc`) && (1 -eq `echo "$deltaY<(${TanForAngles[1]}*$deltaX)" | bc`) ]]
+            if [[ (1 -eq `echo "$deltaY<(${TanForAngles[0]}*$deltaX)" | bc`) && (1 -eq `echo "$deltaX>(${TanForAngles[1]}*$deltaY)" | bc`) ]]
             then
                 TargetCheck=`grep $id $targetsFile | wc -l`
 

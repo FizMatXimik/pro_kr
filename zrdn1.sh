@@ -14,8 +14,9 @@ PlaneSpeedH=250
 KRSpeedL=250
 KRSpeedH=1000
 # Координаты и радиус ЗРДН
-CoordsZRDNXY=(5500000 3725000)
-RadiusZRDN=500000
+CoordsZRDNXY=(6250000 3800000)
+RadiusZRDN=350000
+
 # Путь до папки с Целями
 path="/tmp/GenTargets/Targets"
 # Путь до папки для уничтожения целей

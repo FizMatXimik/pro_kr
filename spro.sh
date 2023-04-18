@@ -12,8 +12,8 @@ SColor="\e[4;35m"
 BRSpeedL=8000
 BRSpeedH=10000
 # Координаты и радиус СПРО
-CoordsSPROXY=(3250000 3350000)
-RadiusSPRO=1000000
+CoordsSPROXY=(3150000 3800000)
+RadiusSPRO=1200000
 # Путь до папки с Целями
 path="/tmp/GenTargets/Targets"
 # Путь до папки для уничтожения целей

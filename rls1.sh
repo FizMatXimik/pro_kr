@@ -31,12 +31,12 @@ tan ()
 }
 
 # Конфигурация РЛС-1 Воронеж-ДМ
-CoordsRLSXY=(6500000 6000000)
+CoordsRLSXY=(6100000 3750000)
 AngleForRLS=(170 370)
 RadiusRLS=4000000
 # Координаты и радиус СПРО
-CoordsSPROXY=(3250000 3350000)
-RadiusSPRO=1000000
+CoordsSPROXY=(3150000 3800000)
+RadiusSPRO=1200000
 # Перевод углов наклона прямых РЛС из градусов в радианы
 AngleForRLSRadian=(`echo "scale=5;(360-(${AngleForRLS[0]}-90))*${PI}/180" | bc -l` `echo "scale=5;(360-(${AngleForRLS[1]}-90))*${PI}/180" | bc -l`)
 # Вычисление коэффициентов наклона через тангенс
