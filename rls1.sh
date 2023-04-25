@@ -21,6 +21,8 @@ WarningsLog="./messages/WarningsLog"
 StatusLog="./messages/StatusLog"
 time_format="%d/%m/%Y %T.%3N"
 
+SUPERSECRETNIYKLUCH="hihihaha"
+
 # Число ПИ, 1000 знаков после запятой
 PI=`echo "scale=1000; 4*a(1)" | bc -l`
 
@@ -43,6 +45,9 @@ AngleForRLSRadian=(`echo "scale=5;(360-(${AngleForRLS[0]}-90))*${PI}/180" | bc -
 TanForAngles=(`tan ${AngleForRLSRadian[0]}` `tan ${AngleForRLSRadian[1]}`)
 
 echo -e "$SColor RLS-1 Started"
+moscow_time=$(TZ=Europe/Moscow date +"$time_format")
+logTime=$(TZ=Europe/Moscow date +"%T.%3N")
+echo -e "$moscow_time,$SName,Start,NULL" | openssl aes-256-cbc -pbkdf2 -a -salt -pass pass:$SUPERSECRETNIYKLUCH > "$StatusLog/$SName-status-$logTime.log"
 
 # Основной цикл станции
 while :
@@ -107,13 +112,13 @@ do
                                 DistanceSecondPoint=`echo "sqrt((${CoordsSPROXY[0]}-$X)^2 + (${CoordsSPROXY[1]}-$Y)^2)" | bc`
                                 moscow_time=$(TZ=Europe/Moscow date +"$time_format")
                                 echo -e "$SColor $moscow_time $SName Обнаружен Бал.блок ID:$id с координатами X$X Y$Y"
-                                echo -e "$moscow_time,$SName,Обнаружен Бал.блок,$id,X$X Y$Y" > "$WarningsLog/$SName-$id-detected-$logTime.log"
+                                echo -e "$moscow_time,$SName,Обнаружен Бал.блок,$id,X$X Y$Y" | openssl aes-256-cbc -pbkdf2 -a -salt -pass pass:$SUPERSECRETNIYKLUCH > "$WarningsLog/$SName-$id-detected-$logTime.log"
 
                                 if [[ ($d -le $RadiusSPRO) && ($DistanceFirstPoint -ge $DistanceSecondPoint) ]]
                                 then
                                     moscow_time=$(TZ=Europe/Moscow date +"$time_format")
                                     echo -e "$SColor $moscow_time $SName Бал.блок ID:$id движется в направлении СПРО"
-                                    echo -e "$moscow_time,$SName,Бал.блок движется в направлении СПРО,$id,X$X Y$Y" > "$WarningsLog/$SName-$id-toSPRO-$logTime.log"
+                                    echo -e "$moscow_time,$SName,Бал.блок движется в направлении СПРО,$id,X$X Y$Y" | openssl aes-256-cbc -pbkdf2 -a -salt -pass pass:$SUPERSECRETNIYKLUCH > "$WarningsLog/$SName-$id-toSPRO-$logTime.log"
                                 fi
                             fi
                             echo "$id;$X;$Y" >> $targetsFile
@@ -127,7 +132,7 @@ do
     done
 
     moscow_time=$(TZ=Europe/Moscow date +"$time_format")
-    echo -e "$moscow_time,$SName,OK,NULL" > "$StatusLog/$SName-status-$logTime.log"
+    echo -e "$moscow_time,$SName,OK,NULL" | openssl aes-256-cbc -pbkdf2 -a -salt -pass pass:$SUPERSECRETNIYKLUCH > "$StatusLog/$SName-status-$logTime.log"
     sleep .9
 done
 
