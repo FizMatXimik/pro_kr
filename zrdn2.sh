@@ -13,7 +13,7 @@ PlaneSpeedL=50
 PlaneSpeedH=250
 KRSpeedL=250
 KRSpeedH=1000
-# Координаты и радиус ЗРДН
+# Координаты и радиус ЗРДН2 (Якутск)
 CoordsZRDNXY=(9250000 4600000)
 RadiusZRDN=500000
 # Путь до папки с Целями

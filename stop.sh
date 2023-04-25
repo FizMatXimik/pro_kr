@@ -13,4 +13,3 @@ rm -rf ./temp/ZRDN3
 rm -rf ./messages/TargetsLog
 rm -rf ./messages/WarningsLog
 rm -rf ./messages/StatusLog
-

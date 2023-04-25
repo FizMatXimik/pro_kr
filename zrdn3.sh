@@ -13,7 +13,7 @@ PlaneSpeedL=50
 PlaneSpeedH=250
 KRSpeedL=250
 KRSpeedH=1000
-# Координаты и радиус ЗРДН
+# Координаты и радиус ЗРДН3 (По координатам)
 CoordsZRDNXY=(11000000 5000000)
 RadiusZRDN=600000
 # Путь до папки с Целями

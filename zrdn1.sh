@@ -13,7 +13,7 @@ PlaneSpeedL=50
 PlaneSpeedH=250
 KRSpeedL=250
 KRSpeedH=1000
-# Координаты и радиус ЗРДН
+# Координаты и радиус ЗРДН1 (Томск)
 CoordsZRDNXY=(6250000 3800000)
 RadiusZRDN=350000
 

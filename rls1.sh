@@ -30,7 +30,7 @@ tan ()
     echo "scale=5;s($1)/c($1)" | bc -l
 }
 
-# Конфигурация РЛС-1 Воронеж-ДМ
+# Конфигурация РЛС-1 Воронеж-ДМ (Новосибирск)
 CoordsRLSXY=(6100000 3750000)
 AngleForRLS=(170 370)
 RadiusRLS=4000000
@@ -125,7 +125,7 @@ do
             continue
         fi
     done
-    # echo -e "\033[0m ..."
+
     moscow_time=$(TZ=Europe/Moscow date +"$time_format")
     echo -e "$moscow_time,$SName,OK,NULL" > "$StatusLog/$SName-status-$logTime.log"
     sleep .9

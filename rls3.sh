@@ -30,7 +30,7 @@ tan ()
     echo "scale=5;s($1)/c($1)" | bc -l
 }
 
-# Конфигурация РЛС-3 Дарьял
+# Конфигурация РЛС-3 Дарьял (Крым)
 CoordsRLSXY=(2950000 2750000)
 AngleForRLS=(90 180)
 RadiusRLS=7000000
@@ -138,7 +138,7 @@ do
             continue
         fi
     done
-    # echo -e "\033[0m ..."
+
     moscow_time=$(TZ=Europe/Moscow date +"$time_format")
     echo -e "$moscow_time,$SName,OK,NULL" > "$StatusLog/$SName-status-$logTime.log"
     sleep .9
