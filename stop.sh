@@ -14,3 +14,7 @@ rm -rf ./messages/TargetsLog
 rm -rf ./messages/WarningsLog
 rm -rf ./messages/StatusLog
 
+log="./logs/KPLOG.log"
+log2="./logs/KPFinal2.log"
+cat $log | sort > $log2
+

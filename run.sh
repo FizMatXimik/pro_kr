@@ -41,7 +41,7 @@ echo "   "
 # sleep 1
 # java -jar /home/aleksandr/pro_kr_graph/target/pro_kr_graph-1.0-SNAPSHOT.jar &
 # PID10=`echo $!`
-
+echo "kp-$PID0 rls1-$PID1 rls2-$PID2 rls3-$PID3 spro-$PID4 zrdn1-$PID5 zrdn2-$PID6 zrdn3-$PID7"
 echo "$PID0 $PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7" > ./files/pidOfScripts
 
   
