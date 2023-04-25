@@ -146,7 +146,7 @@ do
     # echo -e "\033[0m ..."
     moscow_time=$(TZ=Europe/Moscow date +"$time_format")
     echo -e "$moscow_time,$SName,OK,NULL" | openssl aes-256-cbc -pbkdf2 -a -salt -pass pass:$SUPERSECRETNIYKLUCH > "$StatusLog/$SName-status-$logTime.log"
-    sleep .9
+    sleep .5
 done
 
 

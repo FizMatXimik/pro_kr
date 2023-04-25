@@ -4,6 +4,7 @@ mkdir ./temp/SPRO
 mkdir ./temp/ZRDN1
 mkdir ./temp/ZRDN2
 mkdir ./temp/ZRDN3
+mkdir ./temp/notalive
 
 mkdir ./messages/TargetsLog
 mkdir ./messages/WarningsLog

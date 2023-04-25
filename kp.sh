@@ -2,7 +2,7 @@
 
 echo -e "$SColor KP Started"
 
-log="./logs/KPLOG.log"
+log="./logs/KPLOG-new.log"
 > $log
 notalive="./temp/notalive"
 time_format="%d/%m/%Y %T.%3N"
