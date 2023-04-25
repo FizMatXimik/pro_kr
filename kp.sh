@@ -91,7 +91,6 @@ do
 	done
 
 	sleep 1.0
-
 	Select=`echo -e '.mode column\n.headers on\nselect timestamp, system_id from Status_Log ORDER BY timestamp DESC limit 30;\n' | sqlite3 db/command_post_journal.db` 
 
 	for sys in $systems
@@ -104,18 +103,18 @@ do
         	then
             	touch $notalive/$sys
             	moscow_time=$(TZ=Europe/Moscow date +"$time_format")
-            	echo -e "${moscow_time},"__${sys}__",Станция не отвечает" >> "$log"
-            	sqlite3 db/command_post_journal.db "insert into Status_Log (timestamp, system_id, status, missiles)
-						values ('${moscow_time}','__${sys}__', 'Станция не отвечает', 'NULL');" 
+            	echo -e "${moscow_time},"__KP__",Станция __${sys}__ не отвечает" >> "$log"
+      #       	sqlite3 db/command_post_journal.db "insert into Status_Log (timestamp, system_id, status, missiles)
+						# values ('${moscow_time}','__${sys}__', 'Станция не отвечает', 'NULL');" 
             fi
         else
         	if [[ $CheckNotalive -eq 1 ]]
         	then
             	rm -rf $notalive/$sys
             	moscow_time=$(TZ=Europe/Moscow date +"$time_format")
-            	echo -e "${moscow_time},"__${sys}__",Работоспособность восстановлена" >> "$log"
-            	sqlite3 db/command_post_journal.db "insert into Status_Log (timestamp, system_id, status, missiles)
-						values ('${moscow_time}','__${sys}__', 'Работоспособность восстановлена', 'NULL');" 
+            	echo -e "${moscow_time},"__KP__",Работоспособность станции __${sys}__ восстановлена" >> "$log"
+      #       	sqlite3 db/command_post_journal.db "insert into Status_Log (timestamp, system_id, status, missiles)
+						# values ('${moscow_time}','__${sys}__', 'Работоспособность восстановлена', 'NULL');" 
             fi
         fi 
 	done

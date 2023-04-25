@@ -61,6 +61,9 @@ fi
 TanForAngles=($TanForAngles1 $TanForAngles2)
 
 echo -e "$SColor RLS-2 Started"
+moscow_time=$(TZ=Europe/Moscow date +"$time_format")
+logTime=$(TZ=Europe/Moscow date +"%T.%3N")
+echo -e "$moscow_time,$SName,Start,NULL" | openssl aes-256-cbc -pbkdf2 -a -salt -pass pass:$SUPERSECRETNIYKLUCH > "$StatusLog/$SName-status-$logTime.log"
 
 # Основной цикл станции
 while :

@@ -45,6 +45,9 @@ AngleForRLSRadian=(`echo "scale=5;(360-(${AngleForRLS[0]}-90))*${PI}/180" | bc -
 TanForAngles=(`tan ${AngleForRLSRadian[0]}` `tan ${AngleForRLSRadian[1]}`)
 
 echo -e "$SColor RLS-1 Started"
+moscow_time=$(TZ=Europe/Moscow date +"$time_format")
+logTime=$(TZ=Europe/Moscow date +"%T.%3N")
+echo -e "$moscow_time,$SName,Start,NULL" | openssl aes-256-cbc -pbkdf2 -a -salt -pass pass:$SUPERSECRETNIYKLUCH > "$StatusLog/$SName-status-$logTime.log"
 
 # Основной цикл станции
 while :
