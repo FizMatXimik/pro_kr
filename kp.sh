@@ -114,4 +114,7 @@ do
             fi
         fi 
 	done
+	# echo -e '.mode column\n.headers on\nselect * from Status_Log ORDER BY timestamp ASC;\n' | sqlite3 db/command_post_journal.db
+	# echo -e '.mode column\n.headers on\nselect * from Targets_Log ORDER BY timestamp ASC;\n' | sqlite3 db/command_post_journal.db
+	# echo -e '.mode column\n.headers on\nselect * from Warnings_Log ORDER BY timestamp ASC;\n' | sqlite3 db/command_post_journal.db
 done
